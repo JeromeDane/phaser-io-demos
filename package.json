@@ -1,0 +1,19 @@
+{
+  "name": "phaser-io-demos",
+  "version": "0.0.0",
+  "description": "Phaser.io demo playground",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JeromeDane/phaser-io-demos.git"
+  },
+  "author": "Jerome Dane",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JeromeDane/phaser-io-demos/issues"
+  },
+  "homepage": "https://github.com/JeromeDane/phaser-io-demos#readme"
+}
