@@ -1,4 +1,7 @@
 {
+  "globals": {
+    "Phaser": true
+  },
   "ecmaFeatures": {
     "modules": true
   },

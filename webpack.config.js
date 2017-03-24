@@ -10,14 +10,15 @@ const webpack = require('webpack'),
 const nodeEnv = process.env.NODE_ENV || 'development',
       isProduction = nodeEnv === 'production',
       buildPath = path.join(__dirname, './build'),
-      sourcePath = path.join(__dirname, './source')
+      sourcePath = path.join(__dirname, './source'),
+      modulesPath = path.join(__dirname, './node_modules'),
+      phaserModule = path.join(modulesPath, './phaser-ce/'),
+      phaser = path.join(phaserModule, 'build/custom/phaser-split.js'),
+      pixi = path.join(phaserModule, 'build/custom/pixi.js'),
+      p2 = path.join(phaserModule, 'build/custom/p2.js')
 
 const plugins = [
-  new webpack.optimize.CommonsChunkPlugin({
-    name: 'vendor',
-    minChunks: Infinity,
-    filename: 'vendor-[hash].js'
-  }),
+  new webpack.optimize.CommonsChunkPlugin({name: 'vendor', filename: 'vendor.bundle.js'}),
   new webpack.DefinePlugin({'process.env': {NODE_ENV: JSON.stringify(nodeEnv)}}),
   new webpack.NamedModulesPlugin(),
   new HtmlWebpackPlugin({
@@ -26,16 +27,18 @@ const plugins = [
   }),
   new webpack.LoaderOptionsPlugin({
     options: {
-      postcss: [autoprefixer({browsers: ['last 3 version', 'ie >= 10']})],
-      context: sourcePath
+      postcss: [autoprefixer({browsers: ['last 3 version', 'ie >= 10']})]
     }
   })
 ]
 
 const rules = [
+  {test: /pixi\.js/, use: ['script-loader']},
+  {test: /phaser-split\.js$/, use: ['script-loader']},
+  { test: /p2\.js/, use: ['script-loader'] },
   {
-    test: /\.(js|jsx)$/,
-    exclude: /node_modules/,
+    test: /\.js$/,
+    exclude: modulesPath,
     use: ['babel-loader']
   },
   {
@@ -89,19 +92,26 @@ else {
 
 module.exports = {
   devtool: isProduction ? 'eval' : 'source-map',
-  context: sourcePath,
-  entry: {index: './index.js'},
+  entry: {
+    index: './source/index.js',
+    vendor: ['pixi', 'p2', 'phaser']
+  },
   output: {
     path: buildPath,
     publicPath: '/',
-    filename: '[name]-[hash].js'
+    filename: '[name].js'
   },
   module: {rules},
   resolve: {
     modules: [
       path.resolve(__dirname, 'node_modules'),
       sourcePath
-    ]
+    ],
+    alias: {
+      'phaser': phaser,
+      'pixi': pixi,
+      'p2': p2
+    }
   },
   plugins,
   devServer: {
